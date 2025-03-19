@@ -4,3 +4,4 @@ matplotlib
 seaborn
 wordcloud
 PyPDF2
+nltk
