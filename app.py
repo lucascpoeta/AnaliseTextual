@@ -6,20 +6,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from collections import Counter
 from wordcloud import WordCloud
-import PyPDF2  # Biblioteca para ler PDF
+import PyPDF2 
+import nltk
+from nltk.corpus import stopwords
 
+# Baixar o conjunto de stopwords do NLTK, caso ainda não tenha sido baixado
+nltk.download('stopwords')
 
 # Lista de palavras comuns (stopwords) para remover
 def remove_stopwords(words):
-    stopwords = {"de", "da", "do", "das", "dos", "e", "o", "a", "os", "as", "em", "que", "na", "no", "nos", "nas"}
-    return [word for word in words if word.lower() not in stopwords]
-
+    stop_words = set(stopwords.words("portuguese"))  # Usando as stopwords em português
+    return [word for word in words if word.lower() not in stop_words]
 
 # Função para limpar e remover caracteres especiais
 def clean_text(text):
     text = re.sub(r'[^\w\s]', '', text)  # Remove caracteres especiais
     return text
-
 
 def text_analysis(text):
     # Limpar o texto antes de realizar a análise
@@ -98,7 +100,7 @@ if text:
     st.table(df)
 
     # Escolher o tipo de gráfico
-    chart_type = st.radio("Escolha o tipo de gráfico", ("Gráfico de Barras", "Nuvem de Palavras"))
+    chart_type = st.radio("Escolha o tipo de gráfico", ("Gráfico de Barras", "Nuvem de Palavras", "Gráfico de Pizza"))
 
     if chart_type == "Gráfico de Barras":
         # Gráfico de Frequência das Palavras
@@ -106,6 +108,15 @@ if text:
         fig, ax = plt.subplots()
         sns.barplot(x=[word for word, freq in most_common], y=[freq for word, freq in most_common], ax=ax)
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
+        st.pyplot(fig)
+
+    elif chart_type == "Gráfico de Pizza":
+        # Gráfico de Pizza
+        st.write("### 🍰 Gráfico de Frequência das Palavras")
+        fig, ax = plt.subplots()
+        ax.pie([freq for word, freq in most_common], labels=[word for word, freq in most_common],
+               autopct='%1.1f%%', startangle=90)
+        ax.axis("equal")  # Torna o gráfico circular
         st.pyplot(fig)
 
     elif chart_type == "Nuvem de Palavras":
