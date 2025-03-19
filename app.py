@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from collections import Counter
 from wordcloud import WordCloud
-import fitz  # PyMuPDF
+import pymupdf
+
 
 
 # Lista de palavras comuns (stopwords) para remover
