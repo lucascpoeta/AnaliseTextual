@@ -3,5 +3,4 @@ pandas
 matplotlib
 seaborn
 wordcloud
-openpyxl
-pymupdf
+PyPDF2
