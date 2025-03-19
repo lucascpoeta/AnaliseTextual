@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from collections import Counter
 from wordcloud import WordCloud
+import fitz  # PyMuPDF
 
 
 # Lista de palavras comuns (stopwords) para remover
@@ -23,7 +24,7 @@ def clean_text(text):
 def text_analysis(text):
     # Limpar o texto antes de realizar a análise
     text = clean_text(text)
-
+    
     words = text.split()
     words = remove_stopwords(words)
     word_count = len(words)
@@ -59,8 +60,7 @@ if input_choice == "Escrever o texto":
 
 elif input_choice == "Enviar um arquivo":
     # Upload de arquivo
-    uploaded_file = st.file_uploader("Envie um arquivo de texto (.txt, .csv, .xlsx, .json)",
-                                     type=["txt", "csv", "xlsx", "json"])
+    uploaded_file = st.file_uploader("Envie um arquivo de texto ou PDF", type=["txt", "csv", "xlsx", "json", "pdf"])
 
     if uploaded_file is not None:
         file_type = uploaded_file.name.split(".")[-1]
@@ -75,8 +75,15 @@ elif input_choice == "Enviar um arquivo":
         elif file_type == "json":
             data = json.load(uploaded_file)
             text = json.dumps(data)
+        elif file_type == "pdf":
+            # Lê o arquivo PDF e extrai o texto
+            pdf_document = fitz.open(uploaded_file)
+            text = ""
+            for page_num in range(pdf_document.page_count):
+                page = pdf_document.load_page(page_num)
+                text += page.get_text("text")
         else:
-            st.error("Formato de arquivo não suportado. Envie um arquivo de texto (.txt, .csv, .xlsx, .json).")
+            st.error("Formato de arquivo não suportado. Envie um arquivo de texto (.txt, .csv, .xlsx, .json, .pdf).")
 
 if text:
     st.write("## 📑 Resultados da Análise:")
