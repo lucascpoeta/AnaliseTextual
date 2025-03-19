@@ -9,6 +9,7 @@ from wordcloud import WordCloud
 import PyPDF2 
 import nltk
 from nltk.corpus import stopwords
+from unidecode import unidecode 
 
 # Baixar o conjunto de stopwords do NLTK, caso ainda não tenha sido baixado
 nltk.download('stopwords')
@@ -18,9 +19,11 @@ def remove_stopwords(words):
     stop_words = set(stopwords.words("portuguese"))  # Usando as stopwords em português
     return [word for word in words if word.lower() not in stop_words]
 
-# Função para limpar e remover caracteres especiais
+# Função para limpar, remover caracteres especiais, acentos e colocar tudo em minúsculo
 def clean_text(text):
     text = re.sub(r'[^\w\s]', '', text)  # Remove caracteres especiais
+    text = unidecode(text)  # Remove acentos
+    text = text.lower()  # Coloca tudo em minúsculo
     return text
 
 def text_analysis(text):
